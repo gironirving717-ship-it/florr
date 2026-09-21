@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujo de Colores</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas { background: black; }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const centroX = canvas.width / 2;
+const centroY = canvas.height / 2;
+
+let h = 0;
+let angulo = 0;
+
+function hsvToRgb(h, s, v) {
+    let r, g, b;
+    let i = Math.floor(h * 6);
+    let f = h * 6 - i;
+    let p = v * (1 - s);
+    let q = v * (1 - f * s);
+    let t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0: r = v; g = t; b = p; break;
+        case 1: r = q; g = v; b = p; break;
+        case 2: r = p; g = v; b = t; break;
+        case 3: r = p; g = q; b = v; break;
+        case 4: r = t; g = p; b = v; break;
+        case 5: r = v; g = p; b = q; break;
+    }
+    return `rgb(${r * 255}, ${g * 255}, ${b * 255})`;
+}
+
+function arco(radio, grados) {
+    ctx.beginPath();
+    ctx.arc(
+        centroX,
+        centroY,
+        radio,
+        angulo,
+        angulo + grados * Math.PI / 180
+    );
+    ctx.stroke();
+    angulo += grados * Math.PI / 180;
+}
+
+function dibujar() {
+    for (let i = 0; i < 16; i++) {
+        for (let j = 0; j < 18; j++) {
+            ctx.strokeStyle = hsvToRgb(h % 1, 0.9, 1);
+            ctx.lineWidth = 2;
+            h += 0.005;
+
+            angulo += 90 * Math.PI / 180;
+            arco(150 - j * 6, 90);
+
+            angulo -= 90 * Math.PI / 180;
+            arco(150 - j * 6, 90);
+
+            angulo += 180 * Math.PI / 180;
+            arco(40, 24);
+        }
+    }
+}
+
+dibujar();
+</script>
+</body>
+</html>
